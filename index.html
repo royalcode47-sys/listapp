@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listapp</title>
+    <link rel="icon" href="img/listapp (1).png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #60cf92 0%, #222222 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding-top: 30px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .header-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .presupuesto-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .presupuesto-group {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-size: 0.9em;
+            color: #338d5c;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input[type="number"],
+        input[type="text"] {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            width: 200px;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #3ab66e;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #60cf92 0%, #222222 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(10, 22, 15, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(72, 148, 129, 0.6);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #4cdd70;
+            border: 2px solid #1f8130;
+        }
+
+        .btn-secondary:hover {
+            background: #399741;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .btn-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #4ace8c;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 10px;
+            border-radius: 10px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48a865, #0f0e0f);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h2 {
+            color: #468b58;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+        }
+
+        .modal-content .input-group {
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+        }
+
+        .tabla-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table thead {
+            background: linear-gradient(135deg, #66eaa8 0%, #124124 100%);
+            color: white;
+        }
+
+        table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .delete-btn:hover {
+            background: #ff5252;
+        }
+
+        .delete-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .add-button-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .add-button-container .btn {
+            justify-content: center;
+            font-size: 1.1em;
+            padding: 15px 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-title">
+                <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5m0 0h5a3.5 3.5 0 0 1 0 7H12"></path>
+                </svg>
+                <h1>Gestor de Presupuesto</h1>
+            </div>
+            <p>Controla tus gastos de forma inteligente</p>
+        </header>
+
+        <div class="presupuesto-section">
+            <div class="presupuesto-group">
+                <div class="input-group">
+                    <label>Presupuesto Total</label>
+                    <input type="number" id="presupuesto" placeholder="Ej: 1000000" min="0">
+                </div>
+                <button class="btn btn-primary" onclick="establecerPresupuesto()">Establecer</button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Presupuesto Total</div>
+                <div class="stat-value" id="totalPresupuesto">$0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Gastado</div>
+                <div class="stat-value" id="totalGastado" style="color: #ff6b6b;">$0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Disponible</div>
+                <div class="stat-value" id="disponible" style="color: #51cf66;">$0</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="add-button-container">
+            <button class="btn btn-primary" onclick="abrirModal()">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Agregar Gasto
+            </button>
+        </div>
+
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <h2>Agregar Gasto</h2>
+                <div class="input-group">
+                    <label>Descripción</label>
+                    <input type="text" id="descripcion" placeholder="Ej: Comida, Transporte...">
+                </div>
+                <div class="input-group">
+                    <label>Monto</label>
+                    <input type="number" id="monto" placeholder="Ej: 50000" min="0">
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn btn-primary" onclick="agregarGasto()">Guardar</button>
+                    <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabla-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Monto</th>
+                        <th>Restante</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla">
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty-state">
+                <p>No hay gastos registrados aún. ¡Agrega el primero!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    let gastos = [];
+    let presupuestoTotal = 0;
+
+    // Formatear moneda colombiana
+    function formatearPeso(valor) {
+        return new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0
+        }).format(valor);
+    }
+
+    // Cargar datos al iniciar
+    function cargarDatos() {
+        const gastosGuardados = localStorage.getItem('gastos');
+        const presupuestoGuardado = localStorage.getItem('presupuestoTotal');
+        
+        if(gastosGuardados) {
+            gastos = JSON.parse(gastosGuardados);
+        }
+        if(presupuestoGuardado) {
+            presupuestoTotal = parseFloat(presupuestoGuardado);
+            document.getElementById('presupuesto').value = presupuestoTotal;
+        }
+        
+        actualizarUI();
+    }
+
+    // Guardar datos en localStorage
+    function guardarDatos() {
+        localStorage.setItem('gastos', JSON.stringify(gastos));
+        localStorage.setItem('presupuestoTotal', presupuestoTotal);
+    }
+
+    function establecerPresupuesto() {
+        const presupuesto = parseFloat(document.getElementById('presupuesto').value);
+        if(!presupuesto || presupuesto <= 0) {
+            mostrarAlerta('Ingresa un presupuesto válido', 'error');
+            return;
+        }
+        presupuestoTotal = presupuesto;
+        guardarDatos();
+        actualizarUI();
+        mostrarAlerta('Presupuesto establecido correctamente', 'success');
+    }
+
+    function abrirModal() {
+        document.getElementById('modal').classList.add('active');
+        document.getElementById('descripcion').focus();
+    }
+
+    function cerrarModal() {
+        document.getElementById('modal').classList.remove('active');
+    }
+
+    function mostrarAlerta(mensaje, tipo) {
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${tipo}`;
+        alert.textContent = mensaje;
+        document.querySelector('.container').insertBefore(alert, document.querySelector('header').nextSibling);
+        setTimeout(() => alert.remove(), 3000);
+    }
+
+    function agregarGasto() {
+        const desc = document.getElementById('descripcion').value.trim();
+        const monto = parseFloat(document.getElementById('monto').value);
+        
+        if(!desc) {
+            mostrarAlerta('Ingresa una descripción', 'error');
+            return;
+        }
+        if(!monto || monto <= 0) {
+            mostrarAlerta('Ingresa un monto válido', 'error');
+            return;
+        }
+        if(!presupuestoTotal) {
+            mostrarAlerta('Establece un presupuesto primero', 'error');
+            return;
+        }
+        
+        let totalGastos = gastos.reduce((sum, g) => sum + g.monto, 0);
+        if(totalGastos + monto > presupuestoTotal) {
+            mostrarAlerta('El monto supera el presupuesto disponible', 'error');
+            return;
+        }
+        
+        gastos.push({id: Date.now(), desc, monto});
+        guardarDatos();
+        actualizarUI();
+        cerrarModal();
+        document.getElementById('descripcion').value = '';
+        document.getElementById('monto').value = '';
+        mostrarAlerta('Gasto agregado exitosamente', 'success');
+    }
+
+    function eliminarGasto(id) {
+        if(confirm('¿Deseas eliminar este gasto?')) {
+            gastos = gastos.filter(g => g.id !== id);
+            guardarDatos();
+            actualizarUI();
+            mostrarAlerta('Gasto eliminado', 'success');
+        }
+    }
+
+    function actualizarUI() {
+        const tabla = document.getElementById('tabla');
+        const emptyState = document.getElementById('emptyState');
+        tabla.innerHTML = '';
+        
+        let totalGastos = 0;
+        gastos.forEach(g => {
+            totalGastos += g.monto;
+            const restante = presupuestoTotal - totalGastos;
+            
+            const fila = tabla.insertRow();
+            fila.innerHTML = `
+                <td><strong>${g.desc}</strong></td>
+                <td>${formatearPeso(g.monto)}</td>
+                <td style="color: ${restante >= 0 ? '#51cf66' : '#ff6b6b'}; font-weight: 600;">${formatearPeso(restante)}</td>
+                <td><button class="delete-btn" onclick="eliminarGasto(${g.id})">
+                    <svg class="delete-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                    Eliminar
+                </button></td>
+            `;
+        });
+
+        emptyState.style.display = gastos.length === 0 ? 'block' : 'none';
+
+        // Actualizar estadísticas
+        const disponible = presupuestoTotal - totalGastos;
+        document.getElementById('totalPresupuesto').textContent = formatearPeso(presupuestoTotal);
+        document.getElementById('totalGastado').textContent = formatearPeso(totalGastos);
+        document.getElementById('disponible').textContent = formatearPeso(disponible);
+        
+        // Actualizar barra de progreso
+        const porcentaje = presupuestoTotal > 0 ? (totalGastos / presupuestoTotal) * 100 : 0;
+        document.getElementById('progressFill').style.width = Math.min(porcentaje, 100) + '%';
+    }
+
+    // Cerrar modal al hacer click fuera
+    document.getElementById('modal').addEventListener('click', (e) => {
+        if(e.target.id === 'modal') cerrarModal();
+    });
+
+    // Permitir Enter para agregar gasto
+    document.getElementById('monto').addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') agregarGasto();
+    });
+
+    // Cargar datos cuando se abre la página
+    cargarDatos();
+    </script>
+</body>
+</html>
