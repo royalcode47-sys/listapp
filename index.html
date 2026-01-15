@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listapp</title>
-    <link rel="icon" href="img/listapp (1).png" type="image/png">
+    <link rel="icon" href="img/listapp(1).png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -427,7 +427,11 @@
                 </div>
             </div>
         </div>
-
+        
+        <div class="section">
+    <button class="btn btn-primary" onclick="descargarPDF()">Descargar PDF</button>
+    <button class="btn btn-primary" style="margin-top:-50px ; margin-left:200px ; margin-bottom:20px ;" onclick="exportarExcel()">Descargar Excel</button>
+</div>
         <div class="tabla-section">
             <table>
                 <thead>
@@ -447,6 +451,11 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
     <script>
     let gastos = [];
     let presupuestoTotal = 0;
@@ -604,6 +613,96 @@
 
     // Cargar datos cuando se abre la página
     cargarDatos();
+
+    
+function descargarPDF() {
+    if (gastos.length === 0) {
+        mostrarAlerta('No hay gastos para descargar', 'error');
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+const img = new Image();
+    img.src = 'img/listapp.png';
+
+    img.onload = () => {
+        doc.addImage(img, 'PNG', 14, 10, 25, 30);
+
+
+    doc.setFontSize(18);
+    doc.text('                 Listapp - Gestor de Presupuesto', 14, 20);
+
+    doc.setFontSize(12);
+    doc.text(`                         Presupuesto Total: ${formatearPeso(presupuestoTotal)}`, 14, 30);
+    doc.text(`                         Total Gastado: ${formatearPeso(
+        gastos.reduce((s, g) => s + g.monto, 0)
+    )}`, 14, 38);
+
+    const rows = [];
+    let acumulado = 0;
+
+    gastos.forEach(g => {
+        acumulado += g.monto;
+        rows.push([
+            g.desc,
+            formatearPeso(g.monto),
+            formatearPeso(presupuestoTotal - acumulado)
+        ]);
+    });
+
+    doc.autoTable({
+        startY: 50,
+        head: [['Descripción', 'Monto', 'Restante']],
+        body: rows,
+        styles: { fontSize: 10 },
+        headStyles: { fillColor: [96, 207, 146] }
+    });
+
+    doc.save('gastos-listapp.pdf');
+    
+
+    function obtenerFechaHora() {
+    const ahora = new Date();
+    return ahora.toLocaleString('es-CO', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+    });
+}
+
+}
+
+}
+
+function exportarExcel() {
+    if (gastos.length === 0) {
+        mostrarAlerta('No hay gastos para exportar', 'error');
+        return;
+    }
+
+    let acumulado = 0;
+
+    const data = gastos.map(g => {
+        acumulado += g.monto;
+        return {
+            Descripción: g.desc,
+            Monto: g.monto,
+            Restante: presupuestoTotal - acumulado
+        };
+    });
+
+    const hoja = XLSX.utils.json_to_sheet(data);
+    const libro = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(libro, hoja, 'Gastos');
+
+    XLSX.writeFile(libro, 'reporte-presupuesto.xlsx');
+}
+
+
+
+
     </script>
 </body>
 </html>
